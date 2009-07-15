@@ -29,7 +29,7 @@ Speaking of template tags you can now have even more control over the display of
 Just want to display attachments in a post or page? Use the new media tags shortcodes.
 
  
-[Plugin Homepage](http://www.codehooligans.com/2008/12/14/media-tags-plugin/ "Media-Tags Plugin")
+[Plugin Homepage](http://www.codehooligans.com/2009/07/15/media-tags-20-released/ "Media-Tags Plugin")
 
 
 == Installation ==
