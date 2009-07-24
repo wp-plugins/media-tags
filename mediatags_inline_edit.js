@@ -106,7 +106,7 @@ inlineEditMediaTags= {
 		params = fields + '&' + $.param(params);
 
 		// make ajax request
-		$.post('/wp-admin/upload.php', params,
+		$.post('upload.php', params,
 			function(r) {
 
 				$('table.widefat .inline-edit-save .waiting').hide();
