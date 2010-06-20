@@ -3,10 +3,12 @@ Contributors: Paul Menard
 Donate link: http://www.codehooligans.com/donations/
 Tags: images, tags, media, shortcode, permalinks
 Requires at least: 2.7.1
-Tested up to: 2.8.4
-Stable tag: 2.2
+Tested up to: 2.9.2
+Stable tag: 2.2.9.1
 
 == Description ==
+
+[Plugin Homepage](http://www.codehooligans.com/projects/wordpress/media-tags/ "Media-Tags Plugin for WordPress")
 
 Adds an input to the media upload and management screens. This input field can be used to "tag" a media file. Works with images, documents or anything.
 
@@ -30,7 +32,7 @@ Speaking of template tags you can now have even more control over the display of
 Just want to display attachments in a post or page? Use the new media tags shortcodes.
 
  
-[Plugin Homepage](http://www.codehooligans.com/2009/07/15/media-tags-20-released/ "Media-Tags Plugin")
+[Plugin Homepage](http://www.codehooligans.com/2009/08/17/media-tags-2-2-plugin-for-wordpress-released/ "Media-Tags Plugin")
 
 
 == Installation ==
@@ -131,6 +133,59 @@ By default the plugin will use the default WordPress templates in your theme dir
 3. The Media Tags Management screen (new!)
 
 == Changelog == 
+
+= 2.2.9.1 = 
+2010-06-20
+* Change to the rewrite init processing. Found out I was doing it wrong. Thanks for clope on the WordPress.org forums via this thread. http://wordpress.org/support/topic/360613
+
+Hopefully this makes Media-Tags place nicer with larger systems. 
+
+= 2.2.9 =
+2010-06-08: Changes include:
+* Corrected an taxonomy registration during the initializing of the plugin. Testing with WP 3.0 RC1. 
+
+= 2.2.8 =
+2010-04-22: Changes include:
+* Some code tweaks to streamline the logic.
+* Corrected an initializing issue with the plugin that effected the init process which in turn effected the rewrite setup and use of the mediatag.php template file. 
+
+= 2.2.7 =
+2010-04-22: Changes include:
+* Some code tweaks to streamline the logic.
+
+* Bug fix: Better Init method. Thanks to Mike Schinkel for pointing out the error of my ways on this. Also for suggesting using the WP_DEBUG to make sure I have all the holes on the dike plugged. 
+
+* Bug fix: Erronious compare argument on the activate logic media_tags.php in the init function. Thanks to Tom for that note http://www.codehooligans.com/2009/08/17/media-tags-2-2-plugin-for-wordpress-released/#comment-48664
+
+* Bug fix: Fixed some hard-coded table name prefixes. To all I apologize for this issue. For some reason early code I lifted from another plugin I didn't scan. In the mediatags_rewrite.php where the SQL WHERE is manipulated for matching the rewrite URL the queries had hard-coded prefixed as in 'wp_posts.', etc. This prevents the Media Tags plugin from working on non-standard database setup and also for WPMU. This should now be working. 
+
+* Some initial testing with WordPress 3.0 Beta 1. Things seem to work fine with this plugin. But open for further testing. 
+
+= 2.2.6 = 
+2010-01-30: Changes include:
+* Some code tweaks to streamline the logic.
+
+* Added RSS output option to Media-Tag Settings page. When enabled will allow direct RSS for an item archive. for example given a Media-Tag archive like http://www.somesite.com/media-tags/my-tag where my-tag is a Media-Tag item you can access the RSS by accessing http://www.somesite.com/media-tags/my-tag/feed.
+
+* Export/Import logic for Media Tags. I've utilized form action in WordPress that allow complete export and import of Media-Tags elements when using the WordPress export Tool. There is currently not a stand alone method to just export Media-Tags.
+
+* Coming soon a few Media-Tags widgets. 
+
+= 2.2.5 =
+2009-08-30: Changes include:
+* Bug fixes to Admin screens. Namely one but for the Permalink slug field. 
+
+* Added a 'View' option on the Media Tags Management screen on the quite menu options. This will let you preview the media-tag item in your theme. 
+
+* Added new function for mediatags_cloud(); This will generate the tag cloud or tags. Note this new function is a wrapper for the new WordPress core function wp_tg_cloud() added in 2.8. If used on an older version of WordPress there will be no output. http://codex.wordpress.org/Template_Tags/wp_tag_cloud
+
+* Added a column to the Media Library view. This new column lists the item's media tags. The content in this column is much like the Tags column on the Posts listing. The Media Tag is linked so it will filter the Media Library display. Thanks to the many commentors for that simple item. 
+
+* Added some logic to split the media tags into sections on both the Media Library item view as well as the Media Upload view. The thought here is to display the media tags in three sets. The first set is the items' select media-tags. The second set is the common media tags. The third set is the uncommon media tags.
+
+* Code cleanup.
+
+* Coming in some future release will be a bulk management option. This option will allow you to select item(s) from your Media Library and set the media tag. Still working on the interface logic. 
 
 = 2.2 =
 2009-08-16: Changes include:

@@ -8,7 +8,10 @@ function mediatags_init_rewrite()
 	if (isset($wp_rewrite) && $wp_rewrite->using_permalinks()) {
 		add_filter('rewrite_rules_array', 'mediatags_createRewriteRules');
 	}
-	$wp_rewrite->flush_rules();
+	if ((isset($_REQUEST['activate'])) && ($_REQUEST['activate'] == true))
+	{	
+		$wp_rewrite->flush_rules();
+	}
 }
 
 function mediatags_createRewriteRules($rules) {
@@ -34,6 +37,7 @@ function mediatags_parseQuery() {
 	
 	if (is_MEDIA_TAGS_URL()) {
 		global $wp_query;
+			
 		$wp_query->is_single = false;
 		$wp_query->is_page = false;
 		$wp_query->is_archive = false;
@@ -42,6 +46,8 @@ function mediatags_parseQuery() {
 		$wp_query->is_404 = false;
 
 		$wp_query->is_mediatags = true;
+
+		//echo "wp_query<pre>"; print_r($wp_query); echo "</pre>";
 
 		add_action('template_redirect', 'mediatags_includeTemplate');
 	}	
@@ -57,7 +63,7 @@ function is_MEDIA_TAGS_URL() {
 		&& ($wp_version >= 2.0) ) ? get_query_var(MEDIA_TAGS_QUERYVAR) : $GLOBALS[MEDIA_TAGS_QUERYVAR];
 
 	//$series = get_query_var(SERIES_QUERYVAR);
-	if ( (!is_null($MEDIA_TAGS_URL) && ($MEDIA_TAGS_URL != '')) || $wp_query->is_mediatags == true)
+	if ( (!is_null($MEDIA_TAGS_URL) && ($MEDIA_TAGS_URL != '')) || ((isset($wp_query->is_mediatags)) && ($wp_query->is_mediatags == true)) )
 		return true;
 	else
 		return false;
@@ -68,20 +74,54 @@ function mediatags_includeTemplate() {
 		$template = '';
 					
 		$mediatag_var = get_query_var(MEDIA_TAGS_QUERYVAR);
+		//echo "mediatag_var=[".$mediatag_var."]<br />";
+
+		$mediatag_feed_var = get_query_var('feed');
+		//echo "mediatag_feed_var=[".$mediatag_feed_var."]<br />";
+
 		if ($mediatag_var)
 		{	
 			$mediatag_term = is_term( $mediatag_var, MEDIA_TAGS_TAXONOMY );
 			if ($mediatag_term)
 			{					
-				$fname_parts = pathinfo(MEDIA_TAGS_TEMPLATE);
-				if (strlen($fname_parts['filename']))
+				if (($mediatag_feed_var == "rss")
+ 				 || ($mediatag_feed_var == "rss2")
+				 || ($mediatag_feed_var == "feed"))
 				{
-					$template_filename = TEMPLATEPATH. "/" . 
+					//load_template( ABSPATH . WPINC . '/feed-rss2.php' );					
+					//load_template( dirname(__FILE__) . "/mediatags_rss2.php");
+
+					$fname_parts = pathinfo(MEDIA_TAGS_RSS_TEMPLATE);
+					if (strlen($fname_parts['filename']))
+					{
+						$template_filename = TEMPLATEPATH. "/" . 
 							$fname_parts['filename'] . "-". $mediatag_term['term_id'] . 
 							".". $fname_parts['extension'];
 					
-					if ( !file_exists($template_filename) )
-						$template_filename = "";						
+						if ( !file_exists($template_filename) )
+						{
+							$template_filename = "";
+							$plugindir_node = dirname(__FILE__);	
+							$template_filename = $plugindir_node ."/".MEDIA_TAGS_RSS_TEMPLATE;
+						}
+					}
+					//echo "template_filename[".$template_filename."]<br />";
+					//include($template_filename);
+					load_template($template_filename);
+					exit;
+				}
+				else
+				{
+					$fname_parts = pathinfo(MEDIA_TAGS_TEMPLATE);
+					if (strlen($fname_parts['filename']))
+					{
+						$template_filename = TEMPLATEPATH. "/" . 
+							$fname_parts['filename'] . "-". $mediatag_term['term_id'] . 
+							".". $fname_parts['extension'];
+					
+						if ( !file_exists($template_filename) )
+							$template_filename = "";						
+					}
 				}
 			}
 		}
@@ -105,58 +145,42 @@ function mediatags_postsWhere($where)
 { 
 	global $wpdb;
 	
-	//echo "_REQUEST[mediatag_id]=[".$_REQUEST['mediatag_id']."]<br />";
-	//echo "where - initial =[".$where."]<br />";
+	$whichmediatags	= "";
 	
-	$mediatags_var = get_query_var(MEDIA_TAGS_QUERYVAR);
+	$mediatags_var = get_query_var(MEDIA_TAGS_QUERYVAR);	
 	if ($mediatags_var)
 	{
 		//is the term (media-tag value valid)?
-		$sermedia_tags_chk = is_term( $mediatags_var, MEDIA_TAGS_TAXONOMY );
-		//echo "sermedia_tags_chk<pre>"; print_r($sermedia_tags_chk); echo "</pre>";
+		$media_tags_chk = is_term( $mediatags_var, MEDIA_TAGS_TAXONOMY );
+		if ($media_tags_chk)
+		{
+			// Dear Wordpress. I hate parsing SQL. Find a better interface for this crap!
+			$where = str_replace("AND $wpdb->posts.post_type = 'post'", "AND $wpdb->posts.post_type = 'attachment'", $where);
+			$where = str_replace("($wpdb->posts.post_status = 'publish' OR $wpdb->posts.post_status = 'private')", 
+								"($wpdb->posts.post_status = 'inherit')", $where);
+			$where = str_replace("($wpdb->posts.post_status = 'publish')", 
+								"($wpdb->posts.post_status = 'inherit')", $where);
 
-		// Dear Wordpress. I hate parsing SQL. Find a better interface for this crap!
-		$where = str_replace("AND wp_posts.post_type = 'post'", "AND wp_posts.post_type = 'attachment'", $where);
-		$where = str_replace("(wp_posts.post_status = 'publish' OR wp_posts.post_status = 'private')", 
-								"(wp_posts.post_status = 'inherit')", $where);
-		$where = str_replace("(wp_posts.post_status = 'publish')", 
-								"(wp_posts.post_status = 'inherit')", $where);
-
-		//$token = "'" . MEDIA_TAGS_QUERYVAR . "'";
-		//echo "token=[".$token."]<br />";
-
-		
-		if ( !empty($sermedia_tags_chk) ) 
-			$mediatags_var = $sermedia_tags_chk['term_id'];
-		$whichmediatags = '';
-
-		if ( !empty($mediatags_var)) {
 			$whichmediatags .= " AND $wpdb->term_taxonomy.taxonomy = '".MEDIA_TAGS_TAXONOMY."'";
-			$whichmediatags .= " AND $wpdb->term_taxonomy.term_id = $mediatags_var ";
+			$whichmediatags .= " AND $wpdb->term_taxonomy.term_id = ".$media_tags_chk['term_id'];
 		}
-
 	}
 	else if (isset($_REQUEST['mediatag_id']))
 	{
 		$whichmediatags .= " AND $wpdb->term_taxonomy.taxonomy = '".MEDIA_TAGS_TAXONOMY."'";
 		$whichmediatags .= " AND $wpdb->term_taxonomy.term_id = '".$_REQUEST['mediatag_id']."' ";		
 	}
-
 	$where .= $whichmediatags;
-	//echo "after where=[".$where."]<br />";
-	
 	return $where;
 }
-
 
 function mediatags_postsJoin($join) 
 {
 	global $wpdb;
 
-	$mediatag_var = get_query_var(MEDIA_TAGS_QUERYVAR);
-	$cat_var = get_query_var('cat');
-
-	if (( !empty($mediatag_var) && empty( $cat_var )) 
+	$mediatags_var = get_query_var(MEDIA_TAGS_QUERYVAR);
+	$media_tags_chk = is_term( $mediatags_var, MEDIA_TAGS_TAXONOMY );
+	if (($media_tags_chk) 
 	 || (isset($_REQUEST['mediatag_id'])))
 	{
 		$join = " INNER JOIN $wpdb->term_relationships 
@@ -167,4 +191,11 @@ function mediatags_postsJoin($join)
 	return $join;	
 }
 
+function mediatags_term_link($termlink, $term)
+{
+	if ($term->taxonomy == MEDIA_TAGS_TAXONOMY)
+		$termlink = get_mediatag_link($term->term_id);
+	
+	return $termlink;
+}
 ?>
