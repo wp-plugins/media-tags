@@ -16,7 +16,7 @@ function in_mediatag($mediatag_id = '')
 	$mediatag_var = get_query_var(MEDIA_TAGS_QUERYVAR);
 	if ($mediatag_var)
 	{	
-		$mediatag_term = is_term( $mediatag_var, MEDIA_TAGS_TAXONOMY );
+		$mediatag_term = term_exists( $mediatag_var, MEDIA_TAGS_TAXONOMY );
 		if ($mediatag_id === $mediatag_term['term_id'])
 			return true;
 	}
@@ -73,11 +73,11 @@ function list_mediatags($args = '' ) {
 
 // Return the href link value for a given tag_id
 // modeled after WP get_tag_link() function
-function get_mediatag_link( $mediatag_id ) {
+function get_mediatag_link( $mediatag_id, $is_feed=false ) {
 	global $wp_rewrite;
 
 	$mediatag_link = "";
-	if ($wp_rewrite->using_permalinks())
+	if (isset($wp_rewrite) && $wp_rewrite->using_permalinks())
 	{
 		$mediatags_token = '%' . MEDIA_TAGS_QUERYVAR . '%';
 		$mediatag_link = $wp_rewrite->front . MEDIA_TAGS_URL . "/".$mediatags_token;	
@@ -95,7 +95,19 @@ function get_mediatag_link( $mediatag_id ) {
 	} 
 	else {
 		$mediatag_link = str_replace( '%media-tag%', $mediatag_slug, $mediatag_link );
-		$mediatag_link = get_option( 'home' ) . user_trailingslashit( $mediatag_link, 'category' );
+		$mediatag_link = get_option( 'home' ) . user_trailingslashit( $mediatag_link );
+	}
+
+	if ($is_feed == true)
+	{
+		if (isset($wp_rewrite) && $wp_rewrite->using_permalinks())
+		{
+			$mediatag_link .= "feed/";
+		}
+		else
+		{
+			$mediatag_link .= "&feed=rss2";
+		}
 	}
 
 	return apply_filters( 'get_mediatag_link', $mediatag_link, $mediatag_id );
@@ -105,6 +117,7 @@ function get_mediatag_link( $mediatag_id ) {
 function the_mediatags( $before = 'Media-Tags: ', $sep = ', ', $after = '' ) {
 	return the_terms( 0, MEDIA_TAGS_TAXONOMY, $before, $sep, $after );
 }
+
 function get_attachments_by_media_tags($args='')
 {
 	global $mediatags;
@@ -116,11 +129,23 @@ function single_mediatag_title()
 {
 	$mediatag_var = get_query_var(MEDIA_TAGS_QUERYVAR);
 	if ($mediatag_var) {	
-		$mediatag_term = is_term( $mediatag_var, MEDIA_TAGS_TAXONOMY );
+		$mediatag_term = term_exists( $mediatag_var, MEDIA_TAGS_TAXONOMY );
 		if (isset($mediatag_term['term_id'])) {
 			$media_tag = &get_term( $mediatag_term['term_id'], MEDIA_TAGS_TAXONOMY );
 			echo $media_tag->name;
 		}
 	}	
 }
+
+function mediatags_cloud( $args='' ) {
+	if (function_exists('wp_tag_cloud'))
+	{
+		$defaults = array(
+			'taxonomy' => MEDIA_TAGS_TAXONOMY		
+		);
+		$r = wp_parse_args( $args, $defaults );
+		return wp_tag_cloud( $r );
+	}
+}
+
 ?>
