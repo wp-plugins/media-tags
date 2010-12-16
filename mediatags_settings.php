@@ -265,9 +265,7 @@ function mediatags_roles_panel()
 
 //			if ($current_user->has_cap('edit_users'))
 			{
-				if (floatval($wp_version) >= "3.1")
-					$users = get_users();					
-				else
+				if ( version_compare( $wp_version, '3.0.999', '<' ) )			    
 				{
 					$users = array();
 
@@ -280,6 +278,8 @@ function mediatags_roles_panel()
 						}
 					}				
 				}
+				else
+					$users = get_users();					
 				
 				if ($users)
 				{
@@ -323,9 +323,7 @@ function mediatags_roles_panel()
 				$user_roles_array[$role_label]['users'] = array();
 			}
 
-			if (floatval($wp_version) >= "3.1")
-				$users = get_users();					
-			else
+			if ( version_compare( $wp_version, '3.0.999', '<' ) )			    
 			{
 				$users = array();
 				$user_ids = get_editable_user_ids($current_user_id);
@@ -337,6 +335,9 @@ function mediatags_roles_panel()
 					}
 				}				
 			}
+			else
+				$users = get_users();					
+
 			if ($users)
 			{				
 				foreach($users as $user_id => $user)
@@ -810,8 +811,9 @@ function mediatags_help_panel()
 							<li><strong>get_mediatag_link</strong>: <?php _e("Given a Media-Tags term ID will return the href for that term. There is a second optional argument for returning the RSS version of the link href.", MEDIA_TAGS_I18N_DOMAIN); ?> </li>
 							<li><strong>the_mediatags</strong>: <?php _e("Similar to the WordPress function the_tags. Will output a comma separated list of link terms for the viewed attachment. Must be used within the WP loop", MEDIA_TAGS_I18N_DOMAIN); ?></li>
 							<li><strong>single_mediatag_title</strong>: <?php _e("Return the Name/Title of currently viewed Media-Tags term. Used like the single_cat_title or single_tag_title functions.", MEDIA_TAGS_I18N_DOMAIN); ?></li>
-							<li><strong>mediatags_cloud</strong>"" <?php _e("A wrapper to the generic wp_tag_cloud function. All the same parameters are supported.", MEDIA_TAGS_I18N_DOMAIN); ?></li>							
-							<li><strong>mediatags_description</strong>"" <?php _e("Returns the description of a specific Media-Tags term ID if set.", MEDIA_TAGS_I18N_DOMAIN); ?></li>
+							<li><strong>mediatags_cloud</strong>: <?php _e("A wrapper to the generic wp_tag_cloud function. All the same parameters are supported.", MEDIA_TAGS_I18N_DOMAIN); ?></li>							
+							<li><strong>mediatags_description</strong>: <?php _e("Returns the description of a specific Media-Tags term ID if set.", MEDIA_TAGS_I18N_DOMAIN); ?></li>
+							<li><strong>mediatags_get_post_mediatags</strong>: <?php _e("Returns an array of media-tags terms for a given attachment. I know this function reads 'post'. But this is for media items. ", MEDIA_TAGS_I18N_DOMAIN); ?></li>
 						</ul>
 						
 						<?php mediatag_settings_boxfooter(false); ?>
