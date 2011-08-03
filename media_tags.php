@@ -4,7 +4,7 @@ Plugin Name: Media Tags
 Plugin URI: http://www.codehooligans.com/projects/wordpress/media-tags/
 Description: Provides ability to tag media/attachments via Media Management screens
 Author: Paul Menard
-Version: 3.0.4
+Version: 3.0.5
 Author URI: http://www.codehooligans.com
 */
 
@@ -342,9 +342,13 @@ class MediaTags {
 				}
 
 				// If the calling system doesn't want the whole list.
-				if (($r['offset'] > 0) || ($r['numberposts'] > 0))
-					$attachment_posts = array_slice($attachment_posts, $r['offset'], $r['numberposts']);
+				//if (($r['offset'] > 0) || ($r['numberposts'] > 0))
+				//	$attachment_posts = array_slice($attachment_posts, $r['offset'], $r['numberposts']);
 				
+				//http://wordpress.org/support/topic/plugin-media-tags-get_attachments_by_media_tags-twice-offset-fix?replies=2
+				if ($r['numberposts'] > 0)
+					$attachment_posts = array_slice($attachment_posts, 0, $r['numberposts']);
+					
 				if ($r['return_type'] === "li")
 				{
 					$attachment_posts_list = "";

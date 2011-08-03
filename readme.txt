@@ -2,9 +2,9 @@
 Contributors: Paul Menard
 Donate link: http://www.codehooligans.com/donations/
 Tags: media-tags, media tags, media, tags, images, attachments, documents, taxonomy, shortcode, permalinks, role management, bulk admin, gallery
-Requires at least: 3.0.1
-Tested up to: 3.1
-Stable tag: 3.0.4
+Requires at least: 3.1.3
+Tested up to: 3.2.1
+Stable tag: 3.0.5
 
 == Description ==
 
@@ -54,17 +54,23 @@ The FAQ section has been written as a Help section within the plugin's settings 
 
 == Changelog == 
 
-= 3.0.3 =
-2010-12-16
-* Fixed code to allow searches within a media-tags term. For example your side http://www.somesite.com/media-tags/flags?s=xxx would return results from all media-tags terms not just within the 'flags' term. So had to add back in some of the filters for the Where and Join of the query (yuk!). The search is applied in default WordPress fashion to the attachment title an description fields. Will try to include the alt text and caption field in some later release. 
+= 3.0.5 =
+2011-08-03
+* Bug fixes. All bug fixes were received via posts from the wordpress.org forums by alx359. Thanks to alx359 for all the details provided including plugin filename and line numbers. 
 
-Thanks to Carlos for commenting on my blog and bringing this to my attention. You can read the thread of comments here.  http://www.codehooligans.com/projects/wordpress/media-tags/#comment-71043
+http://wordpress.org/support/topic/plugin-media-tags-library-bulk-delete-tags-fix?replies=2
+http://wordpress.org/support/topic/plugin-media-tags-get_attachments_by_media_tags-twice-offset-fix?replies=2
+http://wordpress.org/support/topic/plugin-media-tags-media-library-inline-fix?replies=5
+http://wordpress.org/support/topic/plugin-media-tags-row-count-fix?replies=3
+http://wordpress.org/support/topic/plugin-media-tags-some-visual-aid-tags-being-applied-fix?replies=1
+http://wordpress.org/support/topic/media-library-diagonal-alignment-fix?replies=1
+http://wordpress.org/support/topic/plugin-media-tags-usabilility-fix?replies=4
 
-* Corrected an issue with the compare of the global 'wp_version'. Was using the PHP function floatval but this return inaccurate value when the version is something like '3.0.x'. Now using the PHP function version_compare. 
+coming in the next release:
 
-* Within in the Media > Library enabled search to filter listing by Media-Tags. Select the Media-Tag term from the dropdown. Then enter something into the search and submit. 
+1. Bulk Admin on the upload panel. I know this is a much requested item.
+2. Ability to show all untagged items. Basically show all attachments without media-tags. 
 
-* No other known bugs at this time. 
 
 = 3.0.4 =
 * Bugs fixed
@@ -82,8 +88,18 @@ Added a new section to the Settings panel. This new section allow you to complet
 Many users have been requesting a way to display or filter all untagged media. This is coming in the next release. This release is mostly bug fixes. 
 
 = 3.0.3 =
+2010-12-16
 * More bugs fixed. 
 
+* Fixed code to allow searches within a media-tags term. For example your side http://www.somesite.com/media-tags/flags?s=xxx would return results from all media-tags terms not just within the 'flags' term. So had to add back in some of the filters for the Where and Join of the query (yuk!). The search is applied in default WordPress fashion to the attachment title an description fields. Will try to include the alt text and caption field in some later release. 
+
+Thanks to Carlos for commenting on my blog and bringing this to my attention. You can read the thread of comments here.  http://www.codehooligans.com/projects/wordpress/media-tags/#comment-71043
+
+* Corrected an issue with the compare of the global 'wp_version'. Was using the PHP function floatval but this return inaccurate value when the version is something like '3.0.x'. Now using the PHP function version_compare. 
+
+* Within in the Media > Library enabled search to filter listing by Media-Tags. Select the Media-Tag term from the dropdown. Then enter something into the search and submit. 
+
+* No other known bugs at this time. 
 
 = 3.0.2 =
 2010-12-07
