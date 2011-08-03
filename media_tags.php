@@ -4,7 +4,7 @@ Plugin Name: Media Tags
 Plugin URI: http://www.codehooligans.com/projects/wordpress/media-tags/
 Description: Provides ability to tag media/attachments via Media Management screens
 Author: Paul Menard
-Version: 3.0.1
+Version: 3.0.5
 Author URI: http://www.codehooligans.com
 */
 
@@ -33,7 +33,10 @@ class MediaTags {
 		$this->plugin_version = MEDIA_TAGS_VERSION;
 
 		$plugindir_node 						= dirname(plugin_basename(__FILE__));	
-		$this->plugindir_url 					= get_bloginfo('wpurl') . "/wp-content/plugins/". $plugindir_node;
+		//$this->plugindir_url 					= get_bloginfo('wpurl') . "/wp-content/plugins/". $plugindir_node;
+		$this->plugindir_url 					= WP_CONTENT_URL . "/plugins/". $plugindir_node;
+		
+		
 	
 		// Setup flags for third-party plugins we can integrate with
 		$this->thirdparty->google_sitemap 		= false;
@@ -55,7 +58,7 @@ class MediaTags {
 
 		// Add our sub-panel to the Media section. But only if WP 2.7 or higher!
 		// Not sure why this has to be here and not in admin_init. 
-		if (floatval($wp_version) >= "2.7")
+	    if ( version_compare( $wp_version, '2.7', '>=' ) )
 		{
 			add_action('admin_menu', 'mediatags_admin_panels');
 		}
@@ -78,6 +81,8 @@ class MediaTags {
 
 	function register_taxonomy() {
 		// Add new taxonomy, make it hierarchical (like categories)
+/*
+		$labels = mediatags_get_taxonomy_labels();
 		  $labels = array(
 		    'name' 				=> _x( 'Media-Tags', 			'taxonomy general name', 		MEDIA_TAGS_I18N_DOMAIN ),
 		    'singular_name' 	=> _x( 'Media-Tag', 			'taxonomy singular name', 		MEDIA_TAGS_I18N_DOMAIN ),
@@ -91,6 +96,9 @@ class MediaTags {
 		    'add_new_item' 		=> _x( 'Add New Media-Tag', 	'taxonomy add new item', 		MEDIA_TAGS_I18N_DOMAIN ),
 		    'new_item_name' 	=> _x( 'New Media-Tag Name', 	'taxonomy new item name', 		MEDIA_TAGS_I18N_DOMAIN ),
 		  );
+*/
+		$labels = mediatags_get_taxonomy_labels();
+	
 
 		register_taxonomy(MEDIA_TAGS_TAXONOMY, MEDIA_TAGS_TAXONOMY, array(
 		    'hierarchical' 		=> false,
@@ -334,9 +342,13 @@ class MediaTags {
 				}
 
 				// If the calling system doesn't want the whole list.
-				if (($r['offset'] > 0) || ($r['numberposts'] > 0))
-					$attachment_posts = array_slice($attachment_posts, $r['offset'], $r['numberposts']);
+				//if (($r['offset'] > 0) || ($r['numberposts'] > 0))
+				//	$attachment_posts = array_slice($attachment_posts, $r['offset'], $r['numberposts']);
 				
+				//http://wordpress.org/support/topic/plugin-media-tags-get_attachments_by_media_tags-twice-offset-fix?replies=2
+				if ($r['numberposts'] > 0)
+					$attachment_posts = array_slice($attachment_posts, 0, $r['numberposts']);
+					
 				if ($r['return_type'] === "li")
 				{
 					$attachment_posts_list = "";
