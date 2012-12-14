@@ -1,9 +1,7 @@
 <?php
 function is_mediatag()
 {
-	global $wp_query;
-	
-	if ($wp_query->is_mediatags == true)
+	if ($is_mediatags = get_query_var('is_mediatags'))
 		return true;
 	else
 		return false;
@@ -11,12 +9,14 @@ function is_mediatag()
 
 function in_mediatag($mediatag_id = '')
 {
+	global $wp_version;
+	
 	if (!$mediatag_id) return;
 	
 	$mediatag_var = get_query_var(MEDIA_TAGS_QUERYVAR);
 	if ($mediatag_var)
 	{	
-		if ($wp_version < "3.0")
+	    if ( version_compare( $wp_version, '3.0', '<' ) )
 			$mediatag_term = is_term( $mediatag_var, MEDIA_TAGS_TAXONOMY );
 		else
 			$mediatag_term = term_exists( $mediatag_var, MEDIA_TAGS_TAXONOMY );
@@ -130,9 +130,11 @@ function get_attachments_by_media_tags($args='')
 
 function single_mediatag_title()
 {
+	global $wp_version; 
+	
 	$mediatag_var = get_query_var(MEDIA_TAGS_QUERYVAR);
 	if ($mediatag_var) {	
-		if ($wp_version < "3.0")
+	    if ( version_compare( $wp_version, '3.0', '<' ) )
 			$mediatag_term = is_term( $mediatag_var, MEDIA_TAGS_TAXONOMY );
 		else
 			$mediatag_term = term_exists( $mediatag_var, MEDIA_TAGS_TAXONOMY );
@@ -156,7 +158,8 @@ function mediatags_cloud( $args='' ) {
 }
 
 function get_the_mediatags( $id = 0 ) {
-	return apply_filters( ‘get_the_mediatags’, get_the_terms( $id, MEDIA_TAGS_TAXONOMY ) );
+	// http://wordpress.org/support/topic/plugin-media-tags-mediatags_template_functionsphp-fix?replies=3
+	return apply_filters( 'get_the_mediatags', get_the_terms( $id, MEDIA_TAGS_TAXONOMY ) );
 }
 
 function mediatags_description( $id = 0 ) {
@@ -173,7 +176,7 @@ function mediatags_body_class($classes, $class='' )
 		$classes[] = 'media-tags-archive';
 		$classes[] = 'media-tags-slug-'. $mediatag_var;
 
-		if ($wp_version < "3.0")
+	    if ( version_compare( $wp_version, '3.0', '<' ) )
 			$mediatag_term = is_term( $mediatag_var, MEDIA_TAGS_TAXONOMY );
 		else
 			$mediatag_term = term_exists( $mediatag_var, MEDIA_TAGS_TAXONOMY );
