@@ -4,7 +4,7 @@ Donate link: http://www.codehooligans.com/donations/
 Tags: media-tags, media tags, media, tags, images, attachments, documents, taxonomy, shortcode, permalinks, role management, bulk admin, gallery
 Requires at least: 3.4.1
 Tested up to: 3.5
-Stable tag: 3.1
+Stable tag: 3.1.2
 
 == Description ==
 
@@ -53,6 +53,11 @@ The FAQ section has been written as a Help section within the plugin's settings 
 3. The Media-Tags Bulk Management panel via the media popup Gallery tab (new in 3.0!)
 
 == Changelog == 
+
+= 3.1.2 = 
+2013-03-20
+* Bug fix for sanitizing Media-Tags slug. 
+http://wordpress.org/support/topic/media-tags-slug-sanitizing-not-working-on-special-characters
 
 = 3.1.1 = 
 2012-12-14
