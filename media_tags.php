@@ -4,7 +4,7 @@ Plugin Name: Media Tags
 Plugin URI: http://www.codehooligans.com/projects/wordpress/media-tags/
 Description: Provides ability to tag media/attachments via Media Management screens
 Author: Paul Menard
-Version: 3.1.1
+Version: 3.1.2.1
 Author URI: http://www.codehooligans.com
 */
 
@@ -194,24 +194,26 @@ class MediaTags {
 			$r['tags_compare'] = 'OR';
 
 		// First split the comma-seperated media-tags list into an array
-		$r['media_tags_array'] = split(',', $r['media_tags']);
+		$r['media_tags_array'] = explode(',', $r['media_tags']);
 		if ($r['media_tags_array'])
 		{
 			foreach($r['media_tags_array'] as $idx => $val)
 			{
-				$r['media_tags_array'][$idx] = sanitize_title_with_dashes($val);
+				//$r['media_tags_array'][$idx] = sanitize_title_with_dashes($val);
+				$r['media_tags_array'][$idx] = sanitize_title($val);
 			}
 		}
 
 		// Next split the comma-seperated media-types list into an array
 		if ($r['media_types'])
 		{
-			$r['media_types_array'] = split(',', $r['media_types']);
+			$r['media_types_array'] = explode(',', $r['media_types']);
 			if ($r['media_types_array'])
 			{
 				foreach($r['media_types_array'] as $idx => $val)
 				{
-					$r['media_types_array'][$idx] = sanitize_title_with_dashes($val);
+					//$r['media_types_array'][$idx] = sanitize_title_with_dashes($val);
+					$r['media_types_array'][$idx] = sanitize_title($val);
 				}
 			}
 		}
