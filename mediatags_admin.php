@@ -12,8 +12,6 @@ function mediatags_admin_init()
 	if ( version_compare( $wp_version, '3.5', '<' ) ) {
 		add_filter( 'attachment_fields_to_edit', 		'mediatags_show_fields_to_edit', 11, 2 );
 		add_filter( 'attachment_fields_to_save', 		'meditags_process_attachment_fields_to_save', 11, 2 );
-	} else {
-		add_filter( 'attachment_fields_to_edit', 		'mediatags_show_fields_to_edit_35', 11, 2 );		
 	}
 	add_action( 'delete_attachment', 				'mediatags_delete_attachment_proc' );
 
@@ -26,11 +24,9 @@ function mediatags_admin_init()
 	add_action( 'wp_ajax_get_mediatags_ajax', 		'mediatags_get_mediatags_ajax' );
 	
 	// These hook into the Media Upload popup tabs
-	if ( version_compare( $wp_version, '3.5', '<' ) ) {
-		add_filter( 'media_upload_tabs', 				'mediatag_upload_tab' );
-		add_action( 'media_upload_mediatags', 			'media_upload_mediatags' );
-	}
-	
+	add_filter( 'media_upload_tabs', 				'mediatag_upload_tab' );
+	add_action( 'media_upload_mediatags', 			'media_upload_mediatags' );
+
 	// Handle Export/Import interaction
 	add_action('export_wp', 						'mediatags_wp_export_metadata');
 	add_action('import_post_meta', 					'mediatags_wp_import_metadata', 10, 3);
@@ -50,7 +46,7 @@ function mediatags_admin_init()
 	// if enabled via the Media-Tags > Settings page.
 	if (mediataga_check_url('wp-admin/upload.php'))		
 	{
-		wp_enqueue_style( 'mediatags-stylesheet', $mediatags->plugindir_url .'/css/mediatags_style_admin.css', 
+		wp_enqueue_style( 'mediatags-stylesheet', plugins_url('/css/mediatags_style_admin.css', __FILE__), 
 			false, $mediatags->plugin_version);
 
 		if (($mediatag_admin_bulk_library == "yes") && (current_user_can( MEDIATAGS_ASSIGN_TERMS_CAP )))
@@ -61,14 +57,14 @@ function mediatags_admin_init()
 				wp_enqueue_script('jquery-ui-core'); 
 				wp_enqueue_script('jquery-ui-dialog');
 				wp_enqueue_style( 'mediatags-jquery-ui', 
-					$mediatags->plugindir_url .'/js/jquery-ui/css/flick/jquery-ui-1.7.3.custom.css',
+					plugins_url('/js/jquery-ui/css/flick/jquery-ui-1.7.3.custom.css', __FILE__),
 					array('mediatags-stylesheet'), $mediatags->plugin_version );
 			}
-			wp_enqueue_script('mediatags-bulk-common', $mediatags->plugindir_url .'/js/mediatags_bulk_common.js',
+			wp_enqueue_script('mediatags-bulk-common', plugins_url('/js/mediatags_bulk_common.js', __FILE__),
 				array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), $mediatags->plugin_version);
-			wp_enqueue_script('mediatags-bulk-library', $mediatags->plugindir_url .'/js/mediatags_bulk_library.js',
+			wp_enqueue_script('mediatags-bulk-library', plugins_url('/js/mediatags_bulk_library.js', __FILE__),
 				array('jquery', 'mediatags-bulk-common'), $mediatags->plugin_version);
-			wp_enqueue_script('mediatags', $mediatags->plugindir_url .'/js/mediatags.js',
+			wp_enqueue_script('mediatags', plugins_url('/js/mediatags.js', __FILE__),
 				array('jquery'), $mediatags->plugin_version);
 
 // This logic didn't make it into 3.1 final. Lost it somewhere between 3.1rc2 and rc3
@@ -81,17 +77,17 @@ function mediatags_admin_init()
 	// Else If we are viewing the Media popup via the Post/Page editor. if enabled via the Media-Tags > Settings page.
 	else if (mediataga_check_url('wp-admin/media-upload.php'))			
 	{		
-		wp_enqueue_style( 'mediatags-stylesheet', $mediatags->plugindir_url .'/css/mediatags_style_admin.css',
+		wp_enqueue_style( 'mediatags-stylesheet', plugins_url('/css/mediatags_style_admin.css', __FILE__),
 			false, $mediatags->plugin_version);
 
 		if (($mediatag_admin_bulk_inline == "yes") && (current_user_can( MEDIATAGS_ASSIGN_TERMS_CAP ))
 		 && ((isset($_GET['tab'])) && (($_GET['tab'] == "gallery") || ($_GET['tab'] == "library"))) )
 		{
-			wp_enqueue_script('mediatags-bulk-common', $mediatags->plugindir_url .'/js/mediatags_bulk_common.js',
+			wp_enqueue_script('mediatags-bulk-common', plugins_url('/js/mediatags_bulk_common.js', __FILE__),
 				array('jquery'), $mediatags->plugin_version);
-			wp_enqueue_script('mediatags-bulk-inline', $mediatags->plugindir_url .'/js/mediatags_bulk_inline.js',
+			wp_enqueue_script('mediatags-bulk-inline', plugins_url('/js/mediatags_bulk_inline.js', __FILE__),
 				array('jquery', 'mediatags-bulk-common'), $mediatags->plugin_version);
-			wp_enqueue_script('mediatags', $mediatags->plugindir_url .'/js/mediatags.js',
+			wp_enqueue_script('mediatags',  plugins_url('/js/mediatags.js', __FILE__),
 				array('jquery'), $mediatags->plugin_version);			
 		}
 	}
@@ -103,25 +99,25 @@ function mediatags_admin_init()
 				|| ($_GET['page'] == "mediatags_help_panel")
 				|| ($_GET['page'] == "mediatags_thirdparty_panel") ))		  
 		{
-			wp_enqueue_style( 'mediatags-stylesheet', $mediatags->plugindir_url .'/css/mediatags_style_admin.css',
+			wp_enqueue_style( 'mediatags-stylesheet', plugins_url('/css/mediatags_style_admin.css', __FILE__),
 				false, $mediatags->plugin_version);			
-			wp_enqueue_script('mediatags', $mediatags->plugindir_url .'/js/mediatags.js',
+			wp_enqueue_script('mediatags', plugins_url('/js/mediatags.js', __FILE__),
 				array('jquery'), $mediatags->plugin_version);			
 		}
 	}
 	else if ((mediataga_check_url('wp-admin/media.php')) || ((version_compare($wp_version, '3.4.999', '>')) && (mediataga_check_url('wp-admin/post.php'))))
 	{
-		wp_enqueue_style( 'mediatags-stylesheet', $mediatags->plugindir_url .'/css/mediatags_style_admin.css',
+		wp_enqueue_style( 'mediatags-stylesheet', plugins_url('/css/mediatags_style_admin.css', __FILE__),
 			false, $mediatags->plugin_version);
-		wp_enqueue_script('mediatags', $mediatags->plugindir_url .'/js/mediatags.js',
+		wp_enqueue_script('mediatags', plugins_url('/js/mediatags.js', __FILE__),
 			array('jquery'), $mediatags->plugin_version);			
 	}
 
 //	if (mediataga_check_url('wp-admin/async-upload.php'))		
 //	{
-		//wp_enqueue_style( 'mediatags-stylesheet', $mediatags->plugindir_url .'/css/mediatags_style_admin.css',
+		//wp_enqueue_style( 'mediatags-stylesheet', plugins_url('/css/mediatags_style_admin.css', __FILE__),
 		//	false, $mediatags->plugin_version);
-		//wp_enqueue_script('mediatags', $mediatags->plugindir_url .'/js/mediatags.js',
+		//wp_enqueue_script('mediatags', plugins_url('/js/mediatags.js', __FILE__),
 		//	array('jquery'), $mediatags->plugin_version);			
 //	}
 
@@ -344,21 +340,31 @@ function mediatags_admin_panels()
 					MEDIATAGS_SETTINGS_CAP,
 					'mediatags_settings_panel', 
 					'mediatags_settings_panel');
-
-	add_submenu_page( 'mediatags_settings_panel', 
-					_x('Roles Management','page label', MEDIA_TAGS_I18N_DOMAIN), 
-					_x('Roles Management', 'menu label', MEDIA_TAGS_I18N_DOMAIN), 
-					MEDIATAGS_MANAGE_ROLE_CAP,
-					'mediatags_roles_panel', 
-					'mediatags_roles_panel');
-
-	add_submenu_page( 'mediatags_settings_panel', 
-					_x('Third Party Settings','page label', MEDIA_TAGS_I18N_DOMAIN), 
-					_x('Third Party Settings', 'menu label', MEDIA_TAGS_I18N_DOMAIN), 
-					MEDIATAGS_SETTINGS_CAP,
-					'mediatags_thirdparty_panel', 
-					'mediatags_thirdparty_panel');
-
+	
+	$mediatag_use_roles = get_option('mediatag_use_roles', 'yes'); 
+	if (!$mediatag_use_roles)
+		$mediatag_use_roles = "yes";
+	if ($mediatag_use_roles == 'yes') {
+		add_submenu_page( 'mediatags_settings_panel', 
+						_x('Roles Management','page label', MEDIA_TAGS_I18N_DOMAIN), 
+						_x('Roles Management', 'menu label', MEDIA_TAGS_I18N_DOMAIN), 
+						MEDIATAGS_MANAGE_ROLE_CAP,
+						'mediatags_roles_panel', 
+						'mediatags_roles_panel');
+	}
+	
+	$mediatag_use_thirdparty = get_option('mediatag_use_thirdparty', 'yes'); 
+	if (!$mediatag_use_thirdparty)
+		$mediatag_use_thirdparty = "yes";
+	if ($mediatag_use_thirdparty == 'yes') {
+		add_submenu_page( 'mediatags_settings_panel', 
+						_x('Third Party Settings','page label', MEDIA_TAGS_I18N_DOMAIN), 
+						_x('Third Party Settings', 'menu label', MEDIA_TAGS_I18N_DOMAIN), 
+						MEDIATAGS_SETTINGS_CAP,
+						'mediatags_thirdparty_panel', 
+						'mediatags_thirdparty_panel');
+	}
+	
 	add_submenu_page( 'mediatags_settings_panel', 
 					_x('Help', 'page label', MEDIA_TAGS_I18N_DOMAIN), 
 					_x('Help', 'menu label', MEDIA_TAGS_I18N_DOMAIN), 
@@ -499,29 +505,6 @@ function mediatags_show_fields_to_edit($form_fields, $post)
 				$post_media_tags_fields "
 		);
 	}
-	return $form_fields;
-}
-
-function mediatags_show_fields_to_edit_35($form_fields, $post) 
-{		
-	if (!is_object(get_post($post->ID))) return '';
-	
-	$master_media_tag_fields = "";
-	
-	$post_media_tags = mediatags_get_post_mediatags($post->ID);
-	if ((!$post_media_tags) || (empty($post_media_tags))) return '';
-	
-	$post_media_tags_str='';
-	foreach($post_media_tags as $slug => $term) {
-		if (strlen($post_media_tags_str)) $post_media_tags_str .= ", ";
-		$post_media_tags_str .= $term->name;
-	}
-	
-	$form_fields['media-meta'] = array(
-   		'label' => __('Media-Tags:', MEDIA_TAGS_I18N_DOMAIN),
-		'input' => 'html',
-		'html' => $post_media_tags_str
-	);
 	return $form_fields;
 }
 
@@ -673,12 +656,13 @@ function meditags_process_attachment_fields_to_save($post, $attachment)
 
 	if (strlen($attachment['media_tags_input']))
 	{
-		$tags_tmp_array = split(',', $attachment['media_tags_input']);
+		$tags_tmp_array = explode(',', $attachment['media_tags_input']);
 		if ($tags_tmp_array)
 		{
 			foreach($tags_tmp_array as $idx => $tag_val)
 			{
-				$tag_slug = sanitize_title_with_dashes($tag_val);
+				//$tag_slug = sanitize_title_with_dashes($tag_val);
+				$tag_slug = sanitize_title($tag_val);
 				
 				if ( ! ($id = term_exists( $tag_slug, MEDIA_TAGS_TAXONOMY ) ) )
 					wp_insert_term($tag_val, MEDIA_TAGS_TAXONOMY, array('slug' => $tag_slug));
@@ -712,12 +696,13 @@ function mediatag_process_admin_forms($media_tags_action, $select_media_items, $
 	// First process any new Tags entered via the input field...
 	if ((strlen($media_tags_input)) && ($media_tags_action == "assign"))
 	{
-		$tags_tmp_array = split(',', $media_tags_input);
+		$tags_tmp_array = explode(',', $media_tags_input);
 		if ($tags_tmp_array)
 		{
 			foreach($tags_tmp_array as $idx => $tag_val)
 			{
-				$tag_slug = sanitize_title_with_dashes($tag_val);
+				//$tag_slug = sanitize_title_with_dashes($tag_val);
+				$tag_slug = sanitize_title($tag_val);
 
 				if ( ! ($id = term_exists( $tag_slug, MEDIA_TAGS_TAXONOMY ) ) )
 				{
@@ -1029,7 +1014,7 @@ function get_mediatag_admin_library_link( $mediatag_id ) {
 //	$base_url = get_option('siteurl')."/wp-admin/upload.php?";
 	$base_url = "upload.php?";
 
-	$media_tag = &get_term( $mediatag_id, MEDIA_TAGS_TAXONOMY );
+	$media_tag = get_term( $mediatag_id, MEDIA_TAGS_TAXONOMY );
 	if ( is_wp_error( $media_tag ) )
 		return;
 		
@@ -1096,7 +1081,7 @@ function mediatags_edit_tags_fixes($parent_file)
 
 function mediatags_metaboxes() {
 	add_meta_box('tagsdiv-' . MEDIA_TAGS_TAXONOMY, 
-		__( 'Media-Tags', MEDIA_TAGS_I18N_DOMAIN ), 'post_tags_meta_box', null, 'side', 'core', array( 'taxonomy' => MEDIA_TAGS_TAXONOMY ));
+		__( 'Media-Tags', MEDIA_TAGS_I18N_DOMAIN ), 'post_tags_meta_box', 'attachment', 'side', 'core', array( 'taxonomy' => MEDIA_TAGS_TAXONOMY ));
 }
 
 
